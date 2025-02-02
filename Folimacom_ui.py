@@ -5,12 +5,11 @@ from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayo
     QFileDialog, QGridLayout, QCheckBox
 from helpers.center_window import center_window
 from pathlib import Path
-
-from helpers.image_compressor import compress_image
 from helpers.zip_worker import unzip_file, remove_zip, zip_file
 from helpers.search_for_images import search_for_images
 from helpers.image_compressor_multithread import compress_images_multithread
-from threading import Thread
+from helpers.create_folder import create_folder
+from helpers.move_file import move_file
 
 basedir = os.path.dirname(__file__)
 
@@ -110,11 +109,13 @@ class Folimacom_ui(QWidget):
         else:
             try:
                 img_path = self.__format_path(img_path_url=text)
-                unzip_file(img_path)
-                remove_zip(img_path)
-                images_list = search_for_images(img_path=img_path.parent)
+                folder_path = create_folder(img_path)
+                new_img_path = move_file(old_path=img_path, new_path=folder_path)
+                unzip_file(new_img_path)
+                remove_zip(new_img_path)
+                images_list = search_for_images(img_path=new_img_path.parent)
                 compress_images_multithread(images_list=images_list)
-                zip_file(source_dir=img_path)
+                zip_file(source_dir=new_img_path)
             except Exception as e:
                 self.__error_message(error_msg=f"Ошибка: {str(e)}", msg_box=self.msgBox)
             finally:

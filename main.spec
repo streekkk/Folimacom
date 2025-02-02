@@ -41,5 +41,12 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='main',
+    name='Folimacom',
 )
+
+app = BUNDLE(coll,
+    name='Folimacom.app',
+    icon='icons\\logo.png',
+    bundle_identifier=None
+    )
+
